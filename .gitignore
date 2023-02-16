@@ -127,5 +127,4 @@ dist
 .pnp.*
 
 # custom
-image.*
-generated.*
+lib
