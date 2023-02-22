@@ -14,11 +14,11 @@ import { fillCanvasRegion, fillNewCanvas, fillCanvas } from "image-filler"
 
 The functions are defined as follows
 ```ts
-function fillCanvasRegion(pattern: string | Buffer, canvas: Canvas, start: Vec2, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer>
+function fillCanvasRegion(pattern: string | Buffer, canvas: Canvas, start: Vec2, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Canvas>
 
-function fillNewCanvas(pattern: string | Buffer, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer>
+function fillNewCanvas(pattern: string | Buffer, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Canvas>
 
-function fillCanvas(pattern: string | Buffer, canvas: Canvas, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer>
+function fillCanvas(pattern: string | Buffer, canvas: Canvas, offset = VEC2_ZERO, shiftX = 0): Promise<Canvas>
 ```
 All parameters sharing the same name have the same meaning.
 - `pattern`: Path or Buffer of the pattern
@@ -29,7 +29,7 @@ All parameters sharing the same name have the same meaning.
 - `shiftX`: Horizontal shift when filling patterns on next line
 
 `Vec2` is an interface that can be created by `{ x: number, y: number }`.  
-All functions return a `Buffer` of the resulted canvas.
+All functions return the resulted canvas.
 
 ## Example/Testing
 Check `test/test.ts` for example.

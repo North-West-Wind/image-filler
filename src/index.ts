@@ -16,11 +16,11 @@ const VEC2_ZERO = <Vec2>{ x: 0, y: 0 };
  * @param dimension Width and height of the region
  * @param offset Gap (both x and y, in pixels) between 2 patterns
  * @param shiftX Horizontal shift when filling patterns on next line
- * @returns {Promise<Buffer>}
+ * @returns {Promise<Canvas>}
  */
-export function fillCanvasRegion(pattern: string | Buffer, canvas: Canvas, start: Vec2, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer> {
+export function fillCanvasRegion(pattern: string | Buffer, canvas: Canvas, start: Vec2, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Canvas> {
 	return new Promise((res, rej) => {
-		if (!dimension.x || !dimension.y) return res(canvas.toBuffer());
+		if (!dimension.x || !dimension.y) return res(canvas);
 
 		if (dimension.x < 0) {
 			start.x += dimension.x;
@@ -45,7 +45,7 @@ export function fillCanvasRegion(pattern: string | Buffer, canvas: Canvas, start
 					y += image.height + offset.y;
 				}
 			}
-			res(canvas.toBuffer());
+			res(canvas);
 		}
 
 		image.onerror = rej;
@@ -62,9 +62,9 @@ export function fillCanvasRegion(pattern: string | Buffer, canvas: Canvas, start
  * @param dimension Width and height of the region
  * @param offset Gap (both x and y, in pixels) between 2 patterns
  * @param shiftX Horizontal shift when filling patterns on next line
- * @returns {Promise<Buffer>}
+ * @returns {Promise<Canvas>}
  */
-export function fillNewCanvas(pattern: string | Buffer, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer> {
+export function fillNewCanvas(pattern: string | Buffer, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Canvas> {
 	if (dimension.x <= 0 || dimension.y <= 0) throw new Error("Invalid width/height");
 
 	return fillCanvasRegion(pattern, new Canvas(dimension.x, dimension.y, "image"), VEC2_ZERO, dimension, offset, shiftX);
@@ -76,8 +76,8 @@ export function fillNewCanvas(pattern: string | Buffer, dimension: Vec2, offset 
  * @param canvas User-created canvas
  * @param offset Gap (both x and y, in pixels) between 2 patterns
  * @param shiftX Horizontal shift when filling patterns on next line
- * @returns {Promise<Buffer>}
+ * @returns {Promise<Canvas>}
  */
-export function fillCanvas(pattern: string | Buffer, canvas: Canvas, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer> {
+export function fillCanvas(pattern: string | Buffer, canvas: Canvas, offset = VEC2_ZERO, shiftX = 0): Promise<Canvas> {
 	return fillCanvasRegion(pattern, canvas, VEC2_ZERO, { x: canvas.width, y: canvas.height }, offset, shiftX);
 }
