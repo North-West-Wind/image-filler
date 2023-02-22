@@ -1,5 +1,5 @@
 # Image Filler
-Fills an empty canvas with a pattern.
+Fills a canvas with a pattern, using the [`canvas`](https://github.com/Automattic/node-canvas) package.
 
 ## Usage
 Install this package by
@@ -9,21 +9,31 @@ npm i image-filler
 
 Import the package in your script by
 ```js
-import filler from "image-filler"
+import { fillCanvasRegion, fillNewCanvas, fillCanvas } from "image-filler"
 ```
 
-The `filler` function is as follows
+The functions are defined as follows
 ```ts
-function filler(pattern: string | Buffer, width: number, height: number, offsetX?: number, offsetY?: number, shiftX?: number): Promise<Buffer>
-```
-- `pattern`: A path to the pattern or `Buffer` of the pattern.
-- `width`: Width of the to-be-filled empty canvas.
-- `height`: Height of the to-be-filled empty canvas.
-- `offsetX`: The horizontal gap between each pattern.
-- `offsetY`: The vertical gap between patterns.
-- `shiftX`: The amount of pixels to move to the right when filling the next row.
+function fillCanvasRegion(pattern: string | Buffer, canvas: Canvas, start: Vec2, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer>
 
-## Testing
+function fillNewCanvas(pattern: string | Buffer, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer>
+
+function fillCanvas(pattern: string | Buffer, canvas: Canvas, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer>
+```
+All parameters sharing the same name have the same meaning.
+- `pattern`: Path or Buffer of the pattern
+- `canvas`: User-created canvas
+- `start`: Starting coordinates of the region
+- `dimension`: Width and height of the region
+- `offset`: Gap (both x and y, in pixels) between 2 patterns
+- `shiftX`: Horizontal shift when filling patterns on next line
+
+`Vec2` is an interface that can be created by `{ x: number, y: number }`.  
+All functions return a `Buffer` of the resulted canvas.
+
+## Example/Testing
+Check `test/test.ts` for example.
+
 1. Clone this repo
 2. Run `npm i`
 3. Run `npm run build`

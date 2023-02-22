@@ -1,7 +1,7 @@
 {
   "name": "image-filler",
-  "version": "1.0.0",
-  "description": "Fills an empty canvas with a pattern.",
+  "version": "2.0.0",
+  "description": "Fills a canvas with a pattern.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [

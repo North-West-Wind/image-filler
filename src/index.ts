@@ -1,23 +1,48 @@
 import { Canvas, Image } from "canvas";
 import * as fs from "fs";
 
-export default function filler(pattern: string | Buffer, width: number, height: number, offsetX = 0, offsetY = 0, shiftX = 0): Promise<Buffer> {
+interface Vec2 {
+	x: number;
+	y: number;
+}
+
+const VEC2_ZERO = <Vec2>{ x: 0, y: 0 };
+
+/**
+ * Fills a region of a user-created <canvas> with the <pattern>. Does NOT crop the <pattern> at the end.
+ * @param pattern Path or Buffer of the pattern
+ * @param canvas User-created canvas
+ * @param start Starting coordinates of the region
+ * @param dimension Width and height of the region
+ * @param offset Gap (both x and y, in pixels) between 2 patterns
+ * @param shiftX Horizontal shift when filling patterns on next line
+ * @returns {Promise<Buffer>}
+ */
+export function fillCanvasRegion(pattern: string | Buffer, canvas: Canvas, start: Vec2, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer> {
 	return new Promise((res, rej) => {
-		if (width <= 0 || height <= 0) rej(new Error("Invalid width/height"));
-	
+		if (!dimension.x || !dimension.y) return res(canvas.toBuffer());
+
+		if (dimension.x < 0) {
+			start.x += dimension.x;
+			dimension.x *= -1;
+		}
+		if (dimension.y < 0) {
+			start.y += dimension.y;
+			dimension.y *= -1;
+		}
+
 		const image = new Image();
 	
 		image.onload = () => {
-			var x = 0, y = 0, row = 0;
-			const canvas = new Canvas(width, height, "image");
+			var x = start.x, y = start.y, row = 0;
 			const ctx = canvas.getContext("2d");
-			while (y <= canvas.height) {
+			while (y <= start.y + dimension.y) {
 				ctx.drawImage(image, x, y);
-				x += image.width + offsetX;
-				if (x > canvas.width) {
+				x += image.width + offset.x;
+				if (x > start.x + dimension.x) {
 					x = 0 + shiftX * (++row);
-					while (x > 0) x -= image.width + offsetX;
-					y += image.height + offsetY;
+					while (x > 0) x -= image.width + offset.x;
+					y += image.height + offset.y;
 				}
 			}
 			res(canvas.toBuffer());
@@ -29,4 +54,30 @@ export default function filler(pattern: string | Buffer, width: number, height: 
 			rej(new Error("No such file"));
 		image.src = pattern;
 	});
+}
+
+/**
+ * Creates a canvas of size <dimension> and fills it with the <pattern>
+ * @param pattern Path or Buffer of the pattern
+ * @param dimension Width and height of the region
+ * @param offset Gap (both x and y, in pixels) between 2 patterns
+ * @param shiftX Horizontal shift when filling patterns on next line
+ * @returns {Promise<Buffer>}
+ */
+export function fillNewCanvas(pattern: string | Buffer, dimension: Vec2, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer> {
+	if (dimension.x <= 0 || dimension.y <= 0) throw new Error("Invalid width/height");
+
+	return fillCanvasRegion(pattern, new Canvas(dimension.x, dimension.y, "image"), VEC2_ZERO, dimension, offset, shiftX);
+}
+
+/**
+ * Fills a user created <canvas> with the <pattern>
+ * @param pattern Path or Buffer of the pattern
+ * @param canvas User-created canvas
+ * @param offset Gap (both x and y, in pixels) between 2 patterns
+ * @param shiftX Horizontal shift when filling patterns on next line
+ * @returns {Promise<Buffer>}
+ */
+export function fillCanvas(pattern: string | Buffer, canvas: Canvas, offset = VEC2_ZERO, shiftX = 0): Promise<Buffer> {
+	return fillCanvasRegion(pattern, canvas, VEC2_ZERO, { x: canvas.width, y: canvas.height }, offset, shiftX);
 }
