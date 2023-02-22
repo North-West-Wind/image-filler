@@ -40,8 +40,8 @@ export function fillCanvasRegion(pattern: string | Buffer, canvas: Canvas, start
 				ctx.drawImage(image, x, y);
 				x += image.width + offset.x;
 				if (x > start.x + dimension.x) {
-					x = 0 + shiftX * (++row);
-					while (x > 0) x -= image.width + offset.x;
+					x = start.x + shiftX * (++row);
+					while (x > start.x) x -= image.width + offset.x;
 					y += image.height + offset.y;
 				}
 			}
